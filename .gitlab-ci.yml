@@ -1,0 +1,56 @@
+---
+stages:
+  - sample1
+  - sample2
+  - sample3
+
+variables:
+  foo: hoge_var1
+  bar: hoge_var2
+
+before_script:
+  - echo before
+
+after_script:
+  - echo after
+
+Sample_Job1:
+  stage: sample1
+  script:
+    - cat /etc/redhat-release
+    - echo hello centos7
+  tags:
+    - docker-centos7
+
+Sample_Job2-1:
+  stage: sample2
+  script:
+    - cat /etc/redhat-release
+    - echo hello2-1
+    - echo ${foo:?}
+    - echo ${bar:?}
+  tags:
+    - docker-centos6
+
+Sample_Job2-2:
+  stage: sample2
+  script:
+    - cat /etc/redhat-release
+    - echo hello2-2
+    - env
+  tags:
+    - docker-centos6
+
+Sample_Job3:
+  stage: sample3
+  script:
+    - cat /etc/redhat-release
+    - echo hello3
+    - yum install -y docker
+    - docker ps -a
+  before_script:
+    - echo before overwrite
+  after_script:
+    - echo after overwrite
+  tags:
+    - docker-centos7
