@@ -8,6 +8,7 @@ yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce
 yum install -y docker-ce
 ```
 
+Configure docker daemon for GitLab container registry.
 ```
 vi /usr/lib/systemd/system/docker.service
 ---
@@ -16,24 +17,32 @@ ExecStart=/usr/bin/dockerd -H unix://
 ExecStart=/usr/bin/dockerd --insecure-registry 192.168.33.10:4567 -H unix://
 ---
 ```
-It's necessary to change to an ip address that can access from external network.
+- It's necessary to change to an ip address that can access from external network.
 
+
+Restart tour system.
 ```
 systemctl enable docker
 
 reboot
 ```
 
+
+Take the configure files for gitlab.
 ```
 cd ~/
 git clone https://github.com/infra-ci-demo/common-gitlab-ci.git
 cd common-gitlab-ci
 ```
 
+Edit file to adjust your env.
 ```
 vi volumes/gitlab.rb
 ```
+- It's necessary to change to an ip address that can access from external network again.
 
+
+Run GitLab & CI Runner containers.
 ```
 docker run -d \
            -p 80:80 -p 443:443 -p 4567:4567 \
@@ -60,6 +69,8 @@ docker run -d \
            gitlab/gitlab-runner:v11.5.1
 ```
 
+
+Register runner to GitLab.
 ```
 docker exec gitlab-runner-centos7 gitlab-runner register \
       --non-interactive \
