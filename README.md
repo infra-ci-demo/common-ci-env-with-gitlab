@@ -96,3 +96,26 @@ docker exec gitlab-runner-centos6 gitlab-runner register \
       --docker-volumes /var/run/docker.sock:/var/run/docker.sock \
       --docker-privileged=true
 ```
+
+
+Additional Runner
+```
+docker run -d \
+           -h staging.example.com \
+           --name gitlab-runner-staging \
+           --restart always \
+           -v /var/run/docker.sock:/var/run/docker.sock \
+           gitlab/gitlab-runner:v11.5.1
+
+docker exec gitlab-runner-staging gitlab-runner register \
+      --non-interactive \
+      --url http://10.208.81.221 \
+      --registration-token token-AABBCCDDEE \
+      --tag-list staging \
+      --executor docker \
+      --locked=false \
+      --docker-image centos:7 \
+      --clone-url http://10.208.81.221/ \
+      --docker-volumes /var/run/docker.sock:/var/run/docker.sock \
+      --docker-privileged=true
+```
